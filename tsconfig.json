@@ -59,7 +59,7 @@
       "path": "./packages/helium-sub-daos-sdk"
     },
     {
-      "path": "./packages/helium-entity-manager-sdk"
+      "path": "./packages/entity-manager-sdk"
     },
     {
       "path": "./packages/mobile-entity-manager-sdk"

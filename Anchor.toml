@@ -5,7 +5,7 @@ docs = false
 [programs.localnet]
 lazy_distributor = "1azyuavdMyvsivtNxPoz6SucD18eDHeXzFCUPq5XU7w"
 data_credits = "credMBJhYFzfn7NxBMdU4aUqFggAjgztaCcv2Fo6fPT"
-helium_entity_manager = "hemjuPXBpNvggtaUnN1MwT3wrdhttKEfosTcc2P9Pg8"
+entity_manager = "hemjuPXBpNvggtaUnN1MwT3wrdhttKEfosTcc2P9Pg8"
 circuit_breaker = "circAbx64bbsscPbQzZAUvuXpHqrCe6fLMzc2uKXz9g"
 treasury_management = "treaf4wWBBty3fHdyBpo35Mz84M8k3heKXmjmi9vFt5"
 lazy_transactions = "1atrmQs3eq1N2FEYWu6tyTXbCjP4uQwExpjtnhXtS8h"
@@ -21,7 +21,7 @@ no_emit = "noEmmgLmQdk6DLiPV8CSwQv3qQDyGEhz9m5A4zhtByv"
 members = [
   "programs/lazy-distributor",
   "programs/data-credits",
-  "programs/helium-entity-manager",
+  "programs/entity-manager",
   "programs/circuit-breaker",
   "programs/treasury-management",
   "programs/lazy-transactions",

@@ -35,7 +35,7 @@ pub fn handler(
 ) -> Result<()> {
   require!(args.symbol.len() <= 10, ErrorCode::InvalidStringLength);
   require!(
-    args.symbol == "IOT" || args.symbol == "MOBILE" || TESTING,
+    args.symbol == "GPUWORKER" || TESTING,
     ErrorCode::InvalidSymbol
   );
 

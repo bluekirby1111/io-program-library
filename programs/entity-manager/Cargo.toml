@@ -1,12 +1,12 @@
 [package]
-name = "helium-entity-manager"
+name = "entity-manager"
 version = "0.2.4"
 description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "helium_entity_manager"
+name = "entity_manager"
 
 [features]
 devnet = []

@@ -27,7 +27,7 @@ solana-security-txt = "1.1.1"
 default-env = "0.1.1"
 shared-utils = { path = "./utils/shared-utils" }
 circuit-breaker = { path = "./programs/circuit-breaker", features = ["cpi"] }
-helium-entity-manager = { path = "./programs/helium-entity-manager", features = ["cpi"] }
+entity-manager = { path = "./programs/entity-manager", features = ["cpi"] }
 lazy-distributor = { path = "./programs/lazy-distributor", features = ["cpi"] }
 mobile-entity-manager = { path = "./programs/mobile-entity-manager", features = ["cpi"] }
 price-oracle = { path = "./programs/price-oracle", features = ["cpi"] }

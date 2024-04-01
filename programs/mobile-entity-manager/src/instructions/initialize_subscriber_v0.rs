@@ -5,11 +5,11 @@ use anchor_lang::solana_program::hash::hash;
 use anchor_spl::token::Mint;
 use bubblegum_cpi::program::Bubblegum;
 use bubblegum_cpi::TreeConfig;
-use helium_entity_manager::program::HeliumEntityManager;
-use helium_entity_manager::{
+use entity_manager::program::EntityManager;
+use entity_manager::{
   cpi::accounts::IssueProgramEntityV0, cpi::issue_program_entity_v0, ProgramApprovalV0,
 };
-use helium_entity_manager::{IssueProgramEntityArgsV0, KeySerialization};
+use entity_manager::{IssueProgramEntityArgsV0, KeySerialization};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct InitializeSubscriberArgsV0 {
@@ -98,7 +98,7 @@ pub struct InitializeSubscriberV0<'info> {
   pub bubblegum_program: Program<'info, Bubblegum>,
   pub compression_program: Program<'info, SplAccountCompression>,
   pub system_program: Program<'info, System>,
-  pub helium_entity_manager_program: Program<'info, HeliumEntityManager>,
+  pub helium_entity_manager_program: Program<'info, EntityManager>,
 }
 
 pub fn handler(

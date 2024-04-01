@@ -5,11 +5,11 @@ use anchor_lang::solana_program::hash::hash;
 use anchor_spl::token::Mint;
 use bubblegum_cpi::program::Bubblegum;
 use bubblegum_cpi::TreeConfig;
-use helium_entity_manager::program::HeliumEntityManager;
-use helium_entity_manager::{
+use entity_manager::program::EntityManager;
+use entity_manager::{
   cpi::accounts::IssueProgramEntityV0, cpi::issue_program_entity_v0, ProgramApprovalV0,
 };
-use helium_entity_manager::{IssueProgramEntityArgsV0, KeySerialization};
+use entity_manager::{IssueProgramEntityArgsV0, KeySerialization};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct IssueCarrierNftArgsV0 {
@@ -23,7 +23,7 @@ pub struct IssueCarrierNftV0<'info> {
   pub payer: Signer<'info>,
   #[account(
     seeds = ["program_approval".as_bytes(), crate::id().as_ref()],
-    seeds::program = helium_entity_manager_program.key(),
+    seeds::program = entity_manager_program.key(),
     bump = program_approval.bump_seed,
   )]
   pub program_approval: Box<Account<'info, ProgramApprovalV0>>,
@@ -53,7 +53,7 @@ pub struct IssueCarrierNftV0<'info> {
   /// CHECK: Checked in cpi
   #[account(
     seeds = [b"entity_creator"],
-    seeds::program = helium_entity_manager_program.key(),
+    seeds::program = entity_manager_program.key(),
     bump,
   )]
   pub entity_creator: UncheckedAccount<'info>,
@@ -63,7 +63,7 @@ pub struct IssueCarrierNftV0<'info> {
       "key_to_asset".as_bytes(),
       &hash(carrier.name.as_bytes()).to_bytes()
     ],
-    seeds::program = helium_entity_manager_program.key(),
+    seeds::program = entity_manager_program.key(),
     bump
   )]
   /// CHECK: Checked in cpi
@@ -95,7 +95,7 @@ pub struct IssueCarrierNftV0<'info> {
   pub bubblegum_program: Program<'info, Bubblegum>,
   pub compression_program: Program<'info, SplAccountCompression>,
   pub system_program: Program<'info, System>,
-  pub helium_entity_manager_program: Program<'info, HeliumEntityManager>,
+  pub entity_manager_program: Program<'info, EntityManager>,
 }
 
 pub fn handler(ctx: Context<IssueCarrierNftV0>, args: IssueCarrierNftArgsV0) -> Result<()> {
@@ -103,7 +103,7 @@ pub fn handler(ctx: Context<IssueCarrierNftV0>, args: IssueCarrierNftArgsV0) -> 
 
   issue_program_entity_v0(
     CpiContext::new_with_signer(
-      ctx.accounts.helium_entity_manager_program.to_account_info(),
+      ctx.accounts.entity_manager_program.to_account_info(),
       IssueProgramEntityV0 {
         payer: ctx.accounts.payer.to_account_info(),
         program_approver: ctx.accounts.carrier.to_account_info(),

@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use helium_entity_manager::state::*;
+use entity_manager::state::*;
 use lazy_distributor::program::LazyDistributor;
 use lazy_distributor::state::*;
 use lazy_distributor::{

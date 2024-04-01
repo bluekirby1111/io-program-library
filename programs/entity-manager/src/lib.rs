@@ -29,7 +29,7 @@ security_txt! {
 }
 
 #[program]
-pub mod helium_entity_manager {
+pub mod entity_manager {
   use super::*;
 
   pub fn initialize_rewardable_entity_config_v0(
