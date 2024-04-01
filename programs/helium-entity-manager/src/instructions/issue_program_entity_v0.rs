@@ -10,7 +10,6 @@ use bubblegum_cpi::{
   program::Bubblegum,
   Collection, Creator, MetadataArgs, TokenProgramVersion, TokenStandard, TreeConfig,
 };
-use helium_sub_daos::DaoV0;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct IssueProgramEntityArgsV0 {
@@ -37,9 +36,6 @@ pub struct IssueProgramEntityV0<'info> {
     address = program_address(args.approver_seeds, &program_approval.program_id)?
   )]
   pub program_approver: Signer<'info>,
-  #[account(
-    has_one = dao,
-  )]
   pub program_approval: Box<Account<'info, ProgramApprovalV0>>,
   pub collection_authority: Signer<'info>,
   pub collection: Box<Account<'info, Mint>>,
@@ -60,18 +56,16 @@ pub struct IssueProgramEntityV0<'info> {
   pub collection_master_edition: UncheckedAccount<'info>,
   /// CHECK: Checked via seeds
   #[account(
-    seeds = [b"entity_creator", dao.key().as_ref()],
+    seeds = [b"entity_creator"],
     bump,
   )]
   pub entity_creator: UncheckedAccount<'info>,
-  pub dao: Box<Account<'info, DaoV0>>,
   #[account(
     init,
     payer = payer,
     space = 8 + std::mem::size_of::<KeyToAssetV0>() + 1 + args.entity_key.len(),
     seeds = [
       "key_to_asset".as_bytes(),
-      dao.key().as_ref(),
       &hash(&args.entity_key[..]).to_bytes()
     ],
     bump
@@ -143,7 +137,6 @@ pub fn handler(ctx: Context<IssueProgramEntityV0>, args: IssueProgramEntityArgsV
   );
   ctx.accounts.key_to_asset.set_inner(KeyToAssetV0 {
     asset: asset_id,
-    dao: ctx.accounts.dao.key(),
     entity_key: args.entity_key,
     bump_seed: ctx.bumps["key_to_asset"],
     key_serialization: args.key_serialization,
@@ -192,11 +185,7 @@ pub fn handler(ctx: Context<IssueProgramEntityV0>, args: IssueProgramEntityArgsV
     seller_fee_basis_points: 0,
   };
 
-  let entity_creator_seeds: &[&[&[u8]]] = &[&[
-    b"entity_creator",
-    ctx.accounts.dao.to_account_info().key.as_ref(),
-    &[ctx.bumps["entity_creator"]],
-  ]];
+  let entity_creator_seeds: &[&[&[u8]]] = &[&[b"entity_creator", &[ctx.bumps["entity_creator"]]]];
 
   let mut creator = ctx.accounts.entity_creator.to_account_info();
   creator.is_signer = true;

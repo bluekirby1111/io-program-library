@@ -1,13 +1,5 @@
-use crate::{
-  error::ErrorCode, iot_info_seeds, mobile_info_seeds, rewardable_entity_config_seeds, state::*,
-  TESTING,
-};
+use crate::{error::ErrorCode, iot_info_seeds, mobile_info_seeds, state::*, TESTING};
 use anchor_lang::{prelude::*, solana_program::hash::hash};
-use helium_sub_daos::{
-  cpi::{accounts::TrackDcOnboardingFeesV0, track_dc_onboarding_fees_v0},
-  program::HeliumSubDaos,
-  SubDaoV0, TrackDcOnboardingFeesArgsV0,
-};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct SetEntityActiveArgsV0 {
@@ -19,19 +11,10 @@ pub struct SetEntityActiveArgsV0 {
 #[instruction(args: SetEntityActiveArgsV0)]
 pub struct SetEntityActiveV0<'info> {
   pub active_device_authority: Signer<'info>,
-  #[account(
-    has_one = sub_dao,
-  )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
-  #[account(
-    mut,
-    has_one = active_device_authority,
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   /// CHECK: seeds are checked in the handler
   #[account(mut)]
   pub info: UncheckedAccount<'info>,
-  pub helium_sub_daos_program: Program<'info, HeliumSubDaos>,
 }
 
 /// Modify active status of a batch of entity info accounts. Only allows info accounts from one subdao at a time.
@@ -81,6 +64,7 @@ pub fn handler(ctx: Context<SetEntityActiveV0>, args: SetEntityActiveArgsV0) -> 
     return Err(ErrorCode::InvalidSettings.into());
   }
 
+  /*
   track_dc_onboarding_fees_v0(
     CpiContext::new_with_signer(
       ctx.accounts.helium_sub_daos_program.to_account_info(),
@@ -98,6 +82,7 @@ pub fn handler(ctx: Context<SetEntityActiveV0>, args: SetEntityActiveArgsV0) -> 
       symbol: ctx.accounts.rewardable_entity_config.symbol.clone(),
     },
   )?;
+  */
 
   Ok(())
 }

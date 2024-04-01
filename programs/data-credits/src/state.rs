@@ -16,7 +16,6 @@ pub struct DataCreditsV0 {
 #[derive(Default)]
 pub struct DelegatedDataCreditsV0 {
   pub data_credits: Pubkey,
-  pub sub_dao: Pubkey,
   pub escrow_account: Pubkey,
   pub router_key: String,
   pub bump: u8,

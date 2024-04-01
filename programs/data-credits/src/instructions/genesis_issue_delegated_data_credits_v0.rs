@@ -7,7 +7,6 @@ use circuit_breaker::{
   cpi::{accounts::MintV0, mint_v0},
   CircuitBreaker, MintArgsV0, MintWindowedCircuitBreakerV0,
 };
-use helium_sub_daos::{DaoV0, SubDaoV0};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct GenesisIssueDelegatedDataCreditsArgsV0 {
@@ -24,7 +23,6 @@ pub struct GenesisIssueDelegatedDataCreditsV0<'info> {
     space = 8 + 60 + std::mem::size_of::<DataCreditsV0>(),
     seeds = [
       "delegated_data_credits".as_bytes(),
-      sub_dao.key().as_ref(),
       &hash(args.router_key.as_bytes()).to_bytes()
     ],
     bump,
@@ -54,14 +52,6 @@ pub struct GenesisIssueDelegatedDataCreditsV0<'info> {
   )]
   pub circuit_breaker: Box<Account<'info, MintWindowedCircuitBreakerV0>>,
   pub circuit_breaker_program: Program<'info, CircuitBreaker>,
-  #[account(
-    has_one = dc_mint
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
 
   #[account(
     init_if_needed,
@@ -91,7 +81,6 @@ pub fn handler(
     .set_inner(DelegatedDataCreditsV0 {
       data_credits: ctx.accounts.data_credits.key(),
       router_key: args.router_key,
-      sub_dao: ctx.accounts.sub_dao.key(),
       escrow_account: ctx.accounts.escrow_account.key(),
       bump: ctx.bumps["delegated_data_credits"],
     });

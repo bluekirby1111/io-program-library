@@ -5,7 +5,6 @@ use anchor_lang::prelude::*;
 pub struct RewardableEntityConfigV0 {
   pub authority: Pubkey,
   pub symbol: String,
-  pub sub_dao: Pubkey,
   pub settings: ConfigSettingsV0,
 
   pub bump_seed: u8,
@@ -143,7 +142,6 @@ pub struct MakerV0 {
   pub collection: Pubkey, // The metaplex collection to be issued
   pub merkle_tree: Pubkey,
   pub collection_bump_seed: u8,
-  pub dao: Pubkey,
 }
 
 #[account]
@@ -162,7 +160,6 @@ pub struct DataOnlyConfigV0 {
   pub collection: Pubkey, // The metaplex collection to be issued
   pub merkle_tree: Pubkey,
   pub collection_bump_seed: u8,
-  pub dao: Pubkey,
   pub new_tree_depth: u32, // parameters for new merkle trees when old is full
   pub new_tree_buffer_size: u32,
   pub new_tree_space: u64,
@@ -172,7 +169,6 @@ pub struct DataOnlyConfigV0 {
 #[account]
 #[derive(Default)]
 pub struct ProgramApprovalV0 {
-  pub dao: Pubkey,
   pub program_id: Pubkey,
   pub bump_seed: u8,
 }
@@ -180,7 +176,6 @@ pub struct ProgramApprovalV0 {
 #[account]
 #[derive(Default)]
 pub struct KeyToAssetV0 {
-  pub dao: Pubkey,
   pub asset: Pubkey,
   pub entity_key: Vec<u8>,
   pub bump_seed: u8,
@@ -248,7 +243,6 @@ macro_rules! data_only_config_seeds {
   ( $data_only_config:expr ) => {
     &[
       "data_only_config".as_bytes(),
-      $data_only_config.dao.as_ref(),
       &[$data_only_config.bump_seed],
     ]
   };
@@ -295,7 +289,6 @@ macro_rules! key_to_asset_seeds {
   ( $key_to_asset:expr ) => {
     &[
       "key_to_asset".as_bytes(),
-      $key_to_asset.dao.as_ref(),
       &anchor_lang::solana_program::hash::hash(&$key_to_asset.entity_key[..]).to_bytes(),
       &[$key_to_asset.bump_seed],
     ]

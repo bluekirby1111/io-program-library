@@ -1,19 +1,11 @@
 use crate::state::*;
 use anchor_lang::prelude::*;
-use helium_sub_daos::SubDaoV0;
 
 #[derive(Accounts)]
 pub struct RevokeCarrierV0<'info> {
-  #[account(
-    has_one = authority
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   pub authority: Signer<'info>,
 
-  #[account(
-    mut,
-    has_one = sub_dao
-  )]
+  #[account(mut)]
   pub carrier: Box<Account<'info, CarrierV0>>,
 }
 

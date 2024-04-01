@@ -10,7 +10,6 @@ use helium_entity_manager::{
   cpi::accounts::IssueProgramEntityV0, cpi::issue_program_entity_v0, ProgramApprovalV0,
 };
 use helium_entity_manager::{IssueProgramEntityArgsV0, KeySerialization};
-use helium_sub_daos::{DaoV0, SubDaoV0};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct InitializeSubscriberArgsV0 {
@@ -25,7 +24,7 @@ pub struct InitializeSubscriberV0<'info> {
   #[account(mut)]
   pub payer: Signer<'info>,
   #[account(
-    seeds = ["program_approval".as_bytes(), dao.key().as_ref(), crate::id().as_ref()],
+    seeds = ["program_approval".as_bytes(),  crate::id().as_ref()],
     seeds::program = helium_entity_manager_program.key(),
     bump = program_approval.bump_seed,
   )]
@@ -34,7 +33,6 @@ pub struct InitializeSubscriberV0<'info> {
     has_one = collection,
     has_one = merkle_tree,
     has_one = issuing_authority,
-    has_one = sub_dao,
     constraint = carrier.approved @ ErrorCode::CarrierNotApproved
   )]
   pub carrier: Box<Account<'info, CarrierV0>>,
@@ -57,21 +55,15 @@ pub struct InitializeSubscriberV0<'info> {
   pub collection_master_edition: UncheckedAccount<'info>,
   /// CHECK: Checked via cpi
   #[account(
-    seeds = [b"entity_creator", dao.key().as_ref()],
+    seeds = [b"entity_creator"],
     seeds::program = helium_entity_manager_program.key(),
     bump,
   )]
   pub entity_creator: UncheckedAccount<'info>,
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   #[account(
     mut,
     seeds = [
       "key_to_asset".as_bytes(),
-      dao.key().as_ref(),
       &hash(&args.entity_key[..]).to_bytes()
     ],
     seeds::program = helium_entity_manager_program.key(),
@@ -127,7 +119,6 @@ pub fn handler(
         collection_metadata: ctx.accounts.collection_metadata.to_account_info(),
         collection_master_edition: ctx.accounts.collection_master_edition.to_account_info(),
         entity_creator: ctx.accounts.entity_creator.to_account_info(),
-        dao: ctx.accounts.dao.to_account_info(),
         key_to_asset: ctx.accounts.key_to_asset.to_account_info(),
         tree_authority: ctx.accounts.tree_authority.to_account_info(),
         recipient: ctx.accounts.recipient.to_account_info(),

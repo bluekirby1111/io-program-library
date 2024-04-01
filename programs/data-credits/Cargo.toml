@@ -23,7 +23,6 @@ overflow-checks = true
 [dependencies]
 anchor-lang = { workspace = true }
 anchor-spl = { workspace = true }
-helium-sub-daos = { workspace = true }
 circuit-breaker = { workspace = true }
 pyth-sdk-solana = { version = "0.8.0" }
 lazy-transactions = { path = "../lazy-transactions", features = ["cpi"] }

@@ -5,7 +5,6 @@ use anchor_spl::{
   associated_token::AssociatedToken,
   token::{transfer, Mint, Token, TokenAccount, Transfer},
 };
-use helium_sub_daos::{DaoV0, SubDaoV0};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct ChangeDelegatedSubDaoArgsV0 {
@@ -22,7 +21,6 @@ pub struct ChangeDelegatedSubDaoV0<'info> {
   #[account(
     seeds = [
       "delegated_data_credits".as_bytes(),
-      sub_dao.key().as_ref(),
       &hash(args.router_key.as_bytes()).to_bytes()
     ],
     bump,
@@ -34,7 +32,6 @@ pub struct ChangeDelegatedSubDaoV0<'info> {
     space = 8 + 60 + std::mem::size_of::<DataCreditsV0>(),
     seeds = [
       "delegated_data_credits".as_bytes(),
-      destination_sub_dao.key().as_ref(),
       &hash(args.router_key.as_bytes()).to_bytes()
     ],
     bump,
@@ -47,20 +44,6 @@ pub struct ChangeDelegatedSubDaoV0<'info> {
   )]
   pub data_credits: Box<Account<'info, DataCreditsV0>>,
   pub dc_mint: Box<Account<'info, Mint>>,
-  #[account(
-    has_one = dc_mint,
-    has_one = authority
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub destination_sub_dao: Box<Account<'info, SubDaoV0>>,
-
   /// CHECK: Verified by cpi
   #[account(
     mut,
@@ -95,7 +78,6 @@ pub fn handler(
     .set_inner(DelegatedDataCreditsV0 {
       data_credits: ctx.accounts.data_credits.key(),
       router_key: args.router_key.clone(),
-      sub_dao: ctx.accounts.destination_sub_dao.key(),
       escrow_account: ctx.accounts.destination_escrow_account.key(),
       bump: ctx.bumps["destination_delegated_data_credits"],
     });
@@ -110,7 +92,6 @@ pub fn handler(
       },
       &[&[
         b"delegated_data_credits",
-        ctx.accounts.sub_dao.key().as_ref(),
         &hash(args.router_key.as_bytes()).to_bytes(),
         &[ctx.accounts.delegated_data_credits.bump],
       ]],

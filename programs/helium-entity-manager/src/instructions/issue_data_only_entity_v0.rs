@@ -19,7 +19,6 @@ use bubblegum_cpi::{
   program::Bubblegum,
   Collection, Creator, MetadataArgs, TokenProgramVersion, TokenStandard, TreeConfig,
 };
-use helium_sub_daos::DaoV0;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct IssueDataOnlyEntityArgsV0 {
@@ -51,27 +50,20 @@ pub struct IssueDataOnlyEntityV0<'info> {
   pub collection_master_edition: UncheckedAccount<'info>,
   #[account(
     mut,
-    seeds = ["data_only_config".as_bytes(), dao.key().as_ref()],
+    seeds = ["data_only_config".as_bytes()],
     bump,
     has_one = collection,
     has_one = merkle_tree,
-    has_one = dao,
   )]
   pub data_only_config: Box<Account<'info, DataOnlyConfigV0>>,
   /// CHECK: Signs as a verified creator to make searching easier
-  #[account(
-    seeds = ["entity_creator".as_bytes(), dao.key().as_ref()],
-    bump,
-  )]
   pub entity_creator: UncheckedAccount<'info>,
-  pub dao: Box<Account<'info, DaoV0>>,
   #[account(
     init,
     payer = payer,
     space = 8 + std::mem::size_of::<KeyToAssetV0>() + 1 + args.entity_key.len(),
     seeds = [
       "key_to_asset".as_bytes(),
-      dao.key().as_ref(),
       &hash(&args.entity_key[..]).to_bytes()
     ],
     bump
@@ -153,7 +145,6 @@ pub fn handler(ctx: Context<IssueDataOnlyEntityV0>, args: IssueDataOnlyEntityArg
   );
   ctx.accounts.key_to_asset.set_inner(KeyToAssetV0 {
     asset: asset_id,
-    dao: ctx.accounts.dao.key(),
     entity_key: args.entity_key,
     bump_seed: ctx.bumps["key_to_asset"],
     key_serialization: KeySerialization::B58,
@@ -188,11 +179,7 @@ pub fn handler(ctx: Context<IssueDataOnlyEntityV0>, args: IssueDataOnlyEntityArg
     ],
     seller_fee_basis_points: 0,
   };
-  let entity_creator_seeds: &[&[&[u8]]] = &[&[
-    b"entity_creator",
-    ctx.accounts.dao.to_account_info().key.as_ref(),
-    &[ctx.bumps["entity_creator"]],
-  ]];
+  let entity_creator_seeds: &[&[&[u8]]] = &[&[b"entity_creator", &[ctx.bumps["entity_creator"]]]];
   let mut creator = ctx.accounts.entity_creator.to_account_info();
   creator.is_signer = true;
   let mut key_to_asset_creator = ctx.accounts.key_to_asset.to_account_info();

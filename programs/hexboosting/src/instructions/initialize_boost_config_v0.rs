@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::Mint;
-use helium_sub_daos::SubDaoV0;
 
 use crate::BoostConfigV0;
 
@@ -20,11 +19,6 @@ pub struct InitializeBoostConfigV0<'info> {
   #[account(mut)]
   pub payer: Signer<'info>,
 
-  #[account(
-    has_one = authority,
-    has_one = dnt_mint
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   pub authority: Signer<'info>,
   /// CHECK: Just for settings
   pub rent_reclaim_authority: AccountInfo<'info>,
@@ -52,7 +46,6 @@ pub fn handler(
   require_gt!(args.period_length, 0);
 
   ctx.accounts.boost_config.set_inner(BoostConfigV0 {
-    sub_dao: ctx.accounts.sub_dao.key(),
     price_oracle: ctx.accounts.price_oracle.key(),
     payment_mint: ctx.accounts.dnt_mint.key(),
     boost_price: args.boost_price,

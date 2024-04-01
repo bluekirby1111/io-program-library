@@ -45,7 +45,6 @@ pub struct SetMakerTreeV0<'info> {
 pub fn handler(ctx: Context<SetMakerTreeV0>, args: SetMakerTreeArgsV0) -> Result<()> {
   let signer_seeds: &[&[&[u8]]] = &[&[
     b"maker",
-    ctx.accounts.maker.dao.as_ref(),
     ctx.accounts.maker.name.as_bytes(),
     &[ctx.accounts.maker.bump_seed],
   ]];

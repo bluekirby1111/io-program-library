@@ -16,11 +16,6 @@ use data_credits::{
   program::DataCredits,
   BurnWithoutTrackingArgsV0, DataCreditsV0,
 };
-use helium_sub_daos::{
-  cpi::{accounts::TrackDcOnboardingFeesV0, track_dc_onboarding_fees_v0},
-  program::HeliumSubDaos,
-  DaoV0, SubDaoV0, TrackDcOnboardingFeesArgsV0,
-};
 
 use account_compression_cpi::program::SplAccountCompression;
 use bubblegum_cpi::get_asset_id;
@@ -73,7 +68,6 @@ pub struct OnboardMobileHotspotV0<'info> {
   pub dnt_burner: UncheckedAccount<'info>,
 
   #[account(
-    has_one = sub_dao,
     constraint = rewardable_entity_config.settings.is_mobile()
   )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
@@ -87,24 +81,12 @@ pub struct OnboardMobileHotspotV0<'info> {
   #[account(
     has_one = merkle_tree,
     has_one = issuing_authority,
-    has_one = dao,
   )]
   pub maker: Box<Account<'info, MakerV0>>,
   #[account(
-    has_one = dc_mint,
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao,
     constraint = get_asset_id(&merkle_tree.key(), args.index.into()) == key_to_asset.asset,
   )]
   pub key_to_asset: Box<Account<'info, KeyToAssetV0>>,
-  #[account(
-    mut,
-    has_one = dao,
-    has_one = dnt_mint,
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   #[account(mut)]
   pub dc_mint: Box<Account<'info, Mint>>,
   #[account(mut)]
@@ -131,7 +113,6 @@ pub struct OnboardMobileHotspotV0<'info> {
   pub token_program: Program<'info, Token>,
   pub associated_token_program: Program<'info, AssociatedToken>,
   pub system_program: Program<'info, System>,
-  pub helium_sub_daos_program: Program<'info, HeliumSubDaos>,
 }
 
 impl<'info> OnboardMobileHotspotV0<'info> {
@@ -212,6 +193,7 @@ pub fn handler<'info>(
       .unwrap();
   }
 
+  /*
   track_dc_onboarding_fees_v0(
     CpiContext::new_with_signer(
       ctx.accounts.helium_sub_daos_program.to_account_info(),
@@ -232,6 +214,7 @@ pub fn handler<'info>(
       symbol: ctx.accounts.rewardable_entity_config.symbol.clone(),
     },
   )?;
+  */
 
   // burn the dc tokens
   burn_without_tracking_v0(

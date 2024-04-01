@@ -6,7 +6,6 @@ use anchor_spl::{
   associated_token::AssociatedToken,
   token::{self, Mint, MintTo, Token, TokenAccount},
 };
-use helium_sub_daos::SubDaoV0;
 use mpl_token_metadata::types::{CollectionDetails, DataV2};
 use shared_utils::create_metadata_accounts_v3;
 use shared_utils::token_metadata::{
@@ -35,14 +34,10 @@ pub struct InitializeCarrierV0<'info> {
     init,
     payer = payer,
     space = 8 + 60 + std::mem::size_of::<CarrierV0>(),
-    seeds = ["carrier".as_bytes(), sub_dao.key().as_ref(), args.name.as_bytes()],
+    seeds = ["carrier".as_bytes(), args.name.as_bytes()],
     bump,
   )]
   pub carrier: Box<Account<'info, CarrierV0>>,
-  #[account(
-    has_one = dnt_mint
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   pub dnt_mint: Box<Account<'info, Mint>>,
   #[account(
     init,
@@ -126,12 +121,7 @@ pub fn handler(ctx: Context<InitializeCarrierV0>, args: InitializeCarrierArgsV0)
     ErrorCode::InvalidStringLength
   );
 
-  let signer_seeds: &[&[&[u8]]] = &[&[
-    b"carrier",
-    ctx.accounts.sub_dao.to_account_info().key.as_ref(),
-    args.name.as_bytes(),
-    &[ctx.bumps["carrier"]],
-  ]];
+  let signer_seeds: &[&[&[u8]]] = &[&[b"carrier", args.name.as_bytes(), &[ctx.bumps["carrier"]]]];
 
   token::mint_to(ctx.accounts.mint_ctx().with_signer(signer_seeds), 1)?;
 
@@ -200,7 +190,6 @@ pub fn handler(ctx: Context<InitializeCarrierV0>, args: InitializeCarrierArgsV0)
     // Initialized via set_carrier_tree
     bump_seed: ctx.bumps["carrier"],
     collection_bump_seed: ctx.bumps["collection"],
-    sub_dao: ctx.accounts.sub_dao.key(),
     escrow: ctx.accounts.escrow.key(),
     hexboost_authority: args.hexboost_authority,
     approved: false,

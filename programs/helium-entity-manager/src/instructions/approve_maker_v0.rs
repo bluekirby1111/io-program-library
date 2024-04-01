@@ -4,7 +4,6 @@ use anchor_spl::{
   associated_token::AssociatedToken,
   token::{Mint, Token, TokenAccount},
 };
-use helium_sub_daos::SubDaoV0;
 
 #[derive(Accounts)]
 pub struct ApproveMakerV0<'info> {
@@ -13,14 +12,9 @@ pub struct ApproveMakerV0<'info> {
 
   #[account(
     has_one = authority,
-    has_one = sub_dao,
   )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
-  #[account(
-    constraint = sub_dao.dao == maker.dao,
-    has_one = dnt_mint
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
+
   pub dnt_mint: Box<Account<'info, Mint>>,
   #[account(
     init_if_needed,

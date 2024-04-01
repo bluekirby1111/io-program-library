@@ -10,7 +10,6 @@ use bubblegum_cpi::{
   cpi::{accounts::CreateTree, create_tree},
   program::Bubblegum,
 };
-use helium_sub_daos::DaoV0;
 use mpl_token_metadata::types::{CollectionDetails, DataV2};
 use shared_utils::token_metadata::{
   create_master_edition_v3, CreateMasterEditionV3, CreateMetadataAccountsV3,
@@ -37,12 +36,10 @@ pub struct InitializeDataOnlyV0<'info> {
     init,
     space = 8 + 60 + std::mem::size_of::<DataOnlyConfigV0>(),
     payer = authority,
-    seeds = ["data_only_config".as_bytes(), dao.key().as_ref()],
+    seeds = ["data_only_config".as_bytes()],
     bump,
   )]
   pub data_only_config: Box<Account<'info, DataOnlyConfigV0>>,
-  #[account(has_one = authority)]
-  pub dao: Account<'info, DaoV0>,
   #[account(
     mut,
     seeds = [merkle_tree.key().as_ref()],
@@ -106,14 +103,12 @@ pub fn handler(ctx: Context<InitializeDataOnlyV0>, args: InitializeDataOnlyArgsV
     ErrorCode::InvalidStringLength
   );
 
-  let dao = ctx.accounts.dao.key();
   ctx.accounts.data_only_config.set_inner(DataOnlyConfigV0 {
     authority: args.authority,
     collection: ctx.accounts.collection.key(),
     merkle_tree: Pubkey::default(),
     bump_seed: ctx.bumps["data_only_config"],
     collection_bump_seed: ctx.bumps["collection"],
-    dao,
     new_tree_depth: args.new_tree_depth,
     new_tree_buffer_size: args.new_tree_buffer_size,
     new_tree_space: args.new_tree_space,

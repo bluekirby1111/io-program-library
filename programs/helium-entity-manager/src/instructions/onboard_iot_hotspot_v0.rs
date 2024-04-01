@@ -1,4 +1,4 @@
-use crate::{rewardable_entity_config_seeds, state::*};
+use crate::state::*;
 use account_compression_cpi::program::SplAccountCompression;
 use anchor_lang::{prelude::*, solana_program::hash::hash};
 use anchor_spl::{
@@ -13,11 +13,6 @@ use data_credits::{
   },
   program::DataCredits,
   BurnWithoutTrackingArgsV0, DataCreditsV0,
-};
-use helium_sub_daos::{
-  cpi::{accounts::TrackDcOnboardingFeesV0, track_dc_onboarding_fees_v0},
-  program::HeliumSubDaos,
-  DaoV0, SubDaoV0, TrackDcOnboardingFeesArgsV0,
 };
 use shared_utils::*;
 
@@ -61,7 +56,6 @@ pub struct OnboardIotHotspotV0<'info> {
   pub dc_burner: UncheckedAccount<'info>,
 
   #[account(
-    has_one = sub_dao,
     constraint = rewardable_entity_config.settings.validate_iot_gain(args.gain),
   )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
@@ -75,23 +69,12 @@ pub struct OnboardIotHotspotV0<'info> {
   #[account(
     has_one = merkle_tree,
     has_one = issuing_authority,
-    has_one = dao,
   )]
   pub maker: Box<Account<'info, MakerV0>>,
   #[account(
-    has_one = dc_mint,
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao,
     constraint = get_asset_id(&merkle_tree.key(), args.index.into()) == key_to_asset.asset,
   )]
   pub key_to_asset: Box<Account<'info, KeyToAssetV0>>,
-  #[account(
-    mut,
-    has_one = dao,
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   #[account(mut)]
   pub dc_mint: Box<Account<'info, Mint>>,
 
@@ -111,7 +94,6 @@ pub struct OnboardIotHotspotV0<'info> {
   pub token_program: Program<'info, Token>,
   pub associated_token_program: Program<'info, AssociatedToken>,
   pub system_program: Program<'info, System>,
-  pub helium_sub_daos_program: Program<'info, HeliumSubDaos>,
 }
 
 impl<'info> OnboardIotHotspotV0<'info> {
@@ -149,7 +131,6 @@ pub fn handler<'info>(
     proof_accounts: ctx.remaining_accounts.to_vec(),
   })?;
 
-  let mut dc_fee = ctx.accounts.sub_dao.onboarding_dc_fee;
   ctx.accounts.iot_info.set_inner(IotHotspotInfoV0 {
     asset: asset_id,
     bump_seed: ctx.bumps["iot_info"],
@@ -159,8 +140,10 @@ pub fn handler<'info>(
     is_full_hotspot: true,
     num_location_asserts: 0,
     is_active: false,
-    dc_onboarding_fee_paid: dc_fee,
+    dc_onboarding_fee_paid: 0,
   });
+
+  /*
   track_dc_onboarding_fees_v0(
     CpiContext::new_with_signer(
       ctx.accounts.helium_sub_daos_program.to_account_info(),
@@ -178,6 +161,7 @@ pub fn handler<'info>(
       symbol: ctx.accounts.rewardable_entity_config.symbol.clone(),
     },
   )?;
+  */
 
   if let (
     Some(location),
@@ -189,8 +173,6 @@ pub fn handler<'info>(
     args.location,
     &ctx.accounts.rewardable_entity_config.settings,
   ) {
-    dc_fee = full_location_staking_fee.checked_add(dc_fee).unwrap();
-
     ctx.accounts.iot_info.location = Some(location);
     ctx.accounts.iot_info.num_location_asserts = ctx
       .accounts
@@ -203,7 +185,7 @@ pub fn handler<'info>(
   // burn the dc tokens
   burn_without_tracking_v0(
     ctx.accounts.burn_ctx(),
-    BurnWithoutTrackingArgsV0 { amount: dc_fee },
+    BurnWithoutTrackingArgsV0 { amount: 0 },
   )?;
 
   Ok(())

@@ -8,7 +8,6 @@ use anchor_spl::{
     Transfer,
   },
 };
-use helium_sub_daos::{DaoV0, SubDaoV0};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct DelegateDataCreditsArgsV0 {
@@ -25,7 +24,6 @@ pub struct DelegateDataCreditsV0<'info> {
     space = 8 + 60 + std::mem::size_of::<DataCreditsV0>(),
     seeds = [
       "delegated_data_credits".as_bytes(),
-      sub_dao.key().as_ref(),
       &hash(args.router_key.as_bytes()).to_bytes()
     ],
     bump,
@@ -38,14 +36,6 @@ pub struct DelegateDataCreditsV0<'info> {
   )]
   pub data_credits: Box<Account<'info, DataCreditsV0>>,
   pub dc_mint: Box<Account<'info, Mint>>,
-  #[account(
-    has_one = dc_mint
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
 
   pub owner: Signer<'info>,
 
@@ -81,7 +71,6 @@ pub fn handler(ctx: Context<DelegateDataCreditsV0>, args: DelegateDataCreditsArg
     .set_inner(DelegatedDataCreditsV0 {
       data_credits: ctx.accounts.data_credits.key(),
       router_key: args.router_key,
-      sub_dao: ctx.accounts.sub_dao.key(),
       escrow_account: ctx.accounts.escrow_account.key(),
       bump: ctx.bumps["delegated_data_credits"],
     });

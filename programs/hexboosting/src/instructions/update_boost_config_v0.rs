@@ -1,6 +1,5 @@
 use crate::state::*;
 use anchor_lang::prelude::*;
-use helium_sub_daos::SubDaoV0;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct UpdateBoostConfigArgsV0 {
@@ -14,15 +13,8 @@ pub struct UpdateBoostConfigArgsV0 {
 #[derive(Accounts)]
 #[instruction(args: UpdateBoostConfigArgsV0)]
 pub struct UpdateBoostConfigV0<'info> {
-  #[account(
-    has_one = authority,
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
   pub authority: Signer<'info>,
-  #[account(
-    mut,
-    has_one = sub_dao
-  )]
+  #[account(mut)]
   pub boost_config: Box<Account<'info, BoostConfigV0>>,
 }
 

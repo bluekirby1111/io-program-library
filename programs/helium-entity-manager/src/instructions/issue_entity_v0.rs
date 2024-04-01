@@ -14,7 +14,6 @@ use bubblegum_cpi::{
   program::Bubblegum,
   Collection, Creator, MetadataArgs, TokenProgramVersion, TokenStandard, TreeConfig,
 };
-use helium_sub_daos::DaoV0;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct IssueEntityArgsV0 {
@@ -58,23 +57,20 @@ pub struct IssueEntityV0<'info> {
     has_one = issuing_authority,
     has_one = collection,
     has_one = merkle_tree,
-    has_one = dao,
   )]
   pub maker: Box<Account<'info, MakerV0>>,
   /// CHECK: Signs as a verified creator to make searching easier
   #[account(
-    seeds = [b"entity_creator", dao.key().as_ref()],
+    seeds = [b"entity_creator"],
     bump,
   )]
   pub entity_creator: UncheckedAccount<'info>,
-  pub dao: Box<Account<'info, DaoV0>>,
   #[account(
     init,
     payer = payer,
     space = 8 + std::mem::size_of::<KeyToAssetV0>() + 1 + args.entity_key.len(),
     seeds = [
       "key_to_asset".as_bytes(),
-      dao.key().as_ref(),
       &hash(&args.entity_key[..]).to_bytes()
     ],
     bump
@@ -140,7 +136,6 @@ pub fn handler(ctx: Context<IssueEntityV0>, args: IssueEntityArgsV0) -> Result<(
   );
   ctx.accounts.key_to_asset.set_inner(KeyToAssetV0 {
     asset: asset_id,
-    dao: ctx.accounts.dao.key(),
     entity_key: args.entity_key.clone(),
     bump_seed: ctx.bumps["key_to_asset"],
     key_serialization: KeySerialization::B58,
@@ -153,7 +148,6 @@ pub fn handler(ctx: Context<IssueEntityV0>, args: IssueEntityArgsV0) -> Result<(
 
   let maker_seeds: &[&[&[u8]]] = &[&[
     b"maker",
-    ctx.accounts.maker.dao.as_ref(),
     ctx.accounts.maker.name.as_bytes(),
     &[ctx.accounts.maker.bump_seed],
   ]];
@@ -198,11 +192,7 @@ pub fn handler(ctx: Context<IssueEntityV0>, args: IssueEntityArgsV0) -> Result<(
     ],
     seller_fee_basis_points: 0,
   };
-  let entity_creator_seeds: &[&[&[u8]]] = &[&[
-    b"entity_creator",
-    ctx.accounts.dao.to_account_info().key.as_ref(),
-    &[ctx.bumps["entity_creator"]],
-  ]];
+  let entity_creator_seeds: &[&[&[u8]]] = &[&[b"entity_creator", &[ctx.bumps["entity_creator"]]]];
   let mut creator = ctx.accounts.entity_creator.to_account_info();
   creator.is_signer = true;
   let mut key_to_asset_creator = ctx.accounts.key_to_asset.to_account_info();

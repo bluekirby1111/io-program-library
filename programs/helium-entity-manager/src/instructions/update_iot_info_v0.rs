@@ -14,7 +14,6 @@ use data_credits::{
   },
   BurnWithoutTrackingArgsV0, DataCreditsV0,
 };
-use helium_sub_daos::{DaoV0, SubDaoV0};
 use shared_utils::*;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
@@ -55,18 +54,10 @@ pub struct UpdateIotInfoV0<'info> {
   pub dc_burner: UncheckedAccount<'info>,
 
   #[account(
-    has_one = sub_dao,
     constraint = rewardable_entity_config.settings.validate_iot_gain(args.gain)
   )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
-  #[account(
-    has_one = dc_mint
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
-  #[account(
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
+
   #[account(mut)]
   pub dc_mint: Box<Account<'info, Mint>>,
 

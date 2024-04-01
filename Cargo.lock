@@ -1342,7 +1342,6 @@ dependencies = [
  "anchor-spl",
  "circuit-breaker",
  "default-env",
- "helium-sub-daos",
  "lazy-transactions",
  "pyth-sdk-solana",
  "solana-security-txt",
@@ -1948,30 +1947,11 @@ dependencies = [
  "bytemuck",
  "data-credits",
  "default-env",
- "helium-sub-daos",
  "mpl-token-metadata",
  "no-emit",
  "pyth-sdk-solana",
  "shared-utils",
  "solana-security-txt",
-]
-
-[[package]]
-name = "helium-sub-daos"
-version = "0.1.5"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "circuit-breaker",
- "default-env",
- "mpl-token-metadata",
- "rust_decimal",
- "shared-utils",
- "solana-security-txt",
- "spl-governance-tools",
- "time",
- "treasury-management",
- "voter-stake-registry",
 ]
 
 [[package]]
@@ -2006,7 +1986,6 @@ dependencies = [
  "anchor-spl",
  "bytemuck",
  "default-env",
- "helium-sub-daos",
  "mobile-entity-manager",
  "pyth-sdk-solana",
  "shared-utils",
@@ -2528,7 +2507,6 @@ dependencies = [
  "bytemuck",
  "default-env",
  "helium-entity-manager",
- "helium-sub-daos",
  "mpl-token-metadata",
  "shared-utils",
  "solana-security-txt",
@@ -2588,7 +2566,6 @@ dependencies = [
  "anchor-lang",
  "anchor-spl",
  "default-env",
- "helium-sub-daos",
  "shared-utils",
  "solana-security-txt",
 ]
@@ -3466,17 +3443,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust_decimal"
-version = "1.26.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fc129ab6000ab4037e7718703cdeab82a12c4ee23a238658f55372d80ef2b05"
-dependencies = [
- "arrayvec",
- "num-traits",
- "serde",
-]
-
-[[package]]
 name = "rustc-demangle"
 version = "0.1.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3894,17 +3860,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f92a496fb766b417c996b9c5e57daf2f7ad3b0bebe1ccfca4856390e3d3bb67"
 dependencies = [
  "autocfg",
-]
-
-[[package]]
-name = "slashing-conversion-escrow"
-version = "0.0.1"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "default-env",
- "shared-utils",
- "solana-security-txt",
 ]
 
 [[package]]

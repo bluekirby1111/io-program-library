@@ -1,4 +1,4 @@
-use crate::{error::ErrorCode, rewardable_entity_config_seeds, state::*, TESTING};
+use crate::{error::ErrorCode, state::*, TESTING};
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::hash::hash;
 use anchor_spl::{
@@ -13,11 +13,6 @@ use data_credits::{
   program::DataCredits,
   BurnWithoutTrackingArgsV0, DataCreditsV0,
 };
-use helium_sub_daos::{
-  cpi::{accounts::TrackDcOnboardingFeesV0, track_dc_onboarding_fees_v0},
-  program::HeliumSubDaos,
-  DaoV0, SubDaoV0, TrackDcOnboardingFeesArgsV0,
-};
 
 #[derive(Accounts)]
 pub struct TempPayMobileOnboardingFeeV0<'info> {
@@ -30,19 +25,10 @@ pub struct TempPayMobileOnboardingFeeV0<'info> {
   )]
   pub dc_burner: Box<Account<'info, TokenAccount>>,
   #[account(
-    has_one = sub_dao,
     constraint = rewardable_entity_config.settings.is_mobile() && (rewardable_entity_config.symbol == "MOBILE" || TESTING),
   )]
   pub rewardable_entity_config: Box<Account<'info, RewardableEntityConfigV0>>,
-  #[account(
-    mut,
-    has_one = dao
-  )]
-  pub sub_dao: Box<Account<'info, SubDaoV0>>,
-  #[account(
-    has_one = dc_mint,
-  )]
-  pub dao: Box<Account<'info, DaoV0>>,
+
   #[account(mut)]
   pub dc_mint: Box<Account<'info, Mint>>,
   #[account(
@@ -55,9 +41,6 @@ pub struct TempPayMobileOnboardingFeeV0<'info> {
     has_one = dc_mint
   )]
   pub dc: Account<'info, DataCreditsV0>,
-  #[account(
-    has_one = dao,
-  )]
   pub key_to_asset: Box<Account<'info, KeyToAssetV0>>,
   #[account(mut,
     seeds = [
@@ -74,7 +57,6 @@ pub struct TempPayMobileOnboardingFeeV0<'info> {
   pub token_program: Program<'info, Token>,
   pub associated_token_program: Program<'info, AssociatedToken>,
   pub system_program: Program<'info, System>,
-  pub helium_sub_daos_program: Program<'info, HeliumSubDaos>,
 }
 
 pub fn handler(ctx: Context<TempPayMobileOnboardingFeeV0>) -> Result<()> {
@@ -111,6 +93,7 @@ pub fn handler(ctx: Context<TempPayMobileOnboardingFeeV0>) -> Result<()> {
     BurnWithoutTrackingArgsV0 { amount: dc_fee },
   )?;
 
+  /*
   if ctx.accounts.mobile_info.is_active {
     track_dc_onboarding_fees_v0(
       CpiContext::new_with_signer(
@@ -130,5 +113,6 @@ pub fn handler(ctx: Context<TempPayMobileOnboardingFeeV0>) -> Result<()> {
       },
     )?;
   }
+  */
   Ok(())
 }

@@ -5,7 +5,6 @@ use anchor_lang::prelude::*;
 pub struct BoostConfigV0 {
   pub price_oracle: Pubkey,
   pub payment_mint: Pubkey,
-  pub sub_dao: Pubkey,
   /// Authority to reclaim rent from hexes no longer boosted
   pub rent_reclaim_authority: Pubkey,
   /// The price in the oracle (usd) to burn boost
