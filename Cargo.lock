@@ -1979,20 +1979,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hexboosting"
-version = "0.0.5"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "bytemuck",
- "default-env",
- "mobile-entity-manager",
- "pyth-sdk-solana",
- "shared-utils",
- "solana-security-txt",
-]
-
-[[package]]
 name = "histogram"
 version = "0.6.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2492,24 +2478,6 @@ dependencies = [
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
  "windows-sys 0.48.0",
-]
-
-[[package]]
-name = "mobile-entity-manager"
-version = "0.1.2"
-dependencies = [
- "account-compression-cpi",
- "anchor-lang",
- "anchor-spl",
- "angry-purple-tiger",
- "bs58 0.3.1",
- "bubblegum-cpi",
- "bytemuck",
- "default-env",
- "entity-manager",
- "mpl-token-metadata",
- "shared-utils",
- "solana-security-txt",
 ]
 
 [[package]]

@@ -62,9 +62,6 @@
       "path": "./packages/entity-manager-sdk"
     },
     {
-      "path": "./packages/mobile-entity-manager-sdk"
-    },
-    {
       "path": "./packages/data-credits-sdk"
     },
     {
